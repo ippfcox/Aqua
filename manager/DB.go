@@ -12,7 +12,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/zhanglongx/Aqua/comm"
+	"github.com/ippfcox/Aqua/comm"
 )
 
 // DBVER is DB File Version

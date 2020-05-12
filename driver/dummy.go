@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/zhanglongx/Aqua/comm"
+	"github.com/ippfcox/Aqua/comm"
 )
 
 // Dummy is a good start to write sub-card's driver.

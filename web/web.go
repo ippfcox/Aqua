@@ -12,8 +12,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/zhanglongx/Aqua/comm"
-	"github.com/zhanglongx/Aqua/manager"
+	"github.com/ippfcox/Aqua/comm"
+	"github.com/ippfcox/Aqua/manager"
 )
 
 // M is shortcut for map
@@ -44,7 +44,7 @@ func StartAPP() {
 		http.HandleFunc("/Pipe", pipeIdx)
 	}
 
-	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8000", nil))
 }
 
 // TODO: to make a unified idx func
@@ -205,7 +205,7 @@ func setDP(val url.Values) error {
 	}
 
 	if err := dp.Set(id, params); err != nil {
-		comm.Error.Printf("Set path %d failed", id)
+		comm.Error.Printf("Set path %d failed: %s", id, err)
 		return err
 	}
 

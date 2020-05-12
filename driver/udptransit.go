@@ -14,7 +14,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/rpc/v2/json2"
-	"github.com/zhanglongx/Aqua/comm"
+	"github.com/ippfcox/Aqua/comm"
 )
 
 // TransURL stores url for transit

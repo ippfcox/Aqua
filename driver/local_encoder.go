@@ -10,7 +10,7 @@ import (
 	"net"
 	"os/exec"
 
-	"github.com/zhanglongx/Aqua/comm"
+	"github.com/ippfcox/Aqua/comm"
 )
 
 // LocalEncoderName is the sub-card's name
