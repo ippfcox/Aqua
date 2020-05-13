@@ -104,6 +104,11 @@ func (w *D9550Av3DecWorker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor .
+func (w *D9550Av3DecWorker) Monitor() (interface{}, error) {
+	return true, nil
+}
+
 // Decode .
 func (w *D9550Av3DecWorker) Decode(sess *Session) error {
 	settings := map[string]interface{}{

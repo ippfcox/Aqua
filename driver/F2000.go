@@ -70,6 +70,11 @@ func (w *F2000Worker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor .
+func (w *F2000Worker) Monitor() (interface{}, error) {
+	return true, nil
+}
+
 // Decode ..
 func (w *F2000Worker) Decode(sess *Session) error {
 	comm.Info.Printf("dst: %s:%d\n", sess.IP, sess.Ports[0])

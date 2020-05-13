@@ -88,6 +88,11 @@ func (w *DummyWorker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor return worker status
+func (w *DummyWorker) Monitor() (interface{}, error) {
+	return true, nil
+}
+
 // Report do reporting
 func (w *DummyWorker) Report() []string {
 	return nil

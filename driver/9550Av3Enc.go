@@ -83,6 +83,20 @@ func (w *D9550Av3EncWorker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor .
+func (w *D9550Av3EncWorker) Monitor() (interface{}, error) {
+	params := map[string]interface{}{
+		"send": map[string]interface{}{
+			"bitrate": 0,
+		},
+	}
+	var reply interface{}
+	if err := RPC(w.card.URL, "encoder.get", params, &reply); err != nil {
+		return nil, err
+	}
+	return reply, nil
+}
+
 // Encode .
 func (w *D9550Av3EncWorker) Encode(sess *Session) error {
 	settings := map[string]interface{}{

@@ -6,11 +6,14 @@
 package web
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync"
+	"time"
 
 	"github.com/ippfcox/Aqua/comm"
 	"github.com/ippfcox/Aqua/manager"
@@ -44,7 +47,53 @@ func StartAPP() {
 		http.HandleFunc("/Pipe", pipeIdx)
 	}
 
+	stop := make(chan struct{}) // close(stop) will inform most goroutines to stop
+	fin := make(chan struct{})  // finish signal of `monitorStatus`
+
+	go monitorStatus(stop, fin, ep.GetWorkers())
+
 	log.Fatal(http.ListenAndServe("0.0.0.0:8000", nil))
+
+	close(stop) // inform goroutines to stop
+	<-fin       // wait for `monitorStatus` to stop
+}
+
+func monitorStatus(stop <-chan struct{}, fin chan<- struct{}, workers []string) {
+	defer func() { fin <- struct{}{} }()
+	var wg sync.WaitGroup
+
+	isStoped := func() bool {
+		select {
+		case <-stop: // when `stop` is closed, trigger this
+			return true
+		default:
+			return false
+		}
+	}
+
+	// get worker status every 2 seconds
+	queryStatus := func(workerName string, stop <-chan struct{}) {
+		defer wg.Done()
+		tick := time.NewTicker(2 * time.Second)
+		for {
+			if isStoped() {
+				break
+			}
+			select {
+			case <-tick.C:
+				ep.UpdateWorkerStatus(workerName)
+			}
+		}
+	}
+
+	// start `queryStatus` for each worker
+	for _, w := range workers {
+		wg.Add(1)
+		go queryStatus(w, stop)
+	}
+
+	// block until all queryStatus finish
+	wg.Wait()
 }
 
 // TODO: to make a unified idx func
@@ -108,6 +157,8 @@ func decodeIdx(w http.ResponseWriter, r *http.Request) {
 
 func pipeIdx(w http.ResponseWriter, r *http.Request) {
 	manager.GetPipeInfo(w)
+
+	fmt.Fprintf(w, "%v", ep.GetWorkerStatus())
 }
 
 func setEP(val url.Values) error {

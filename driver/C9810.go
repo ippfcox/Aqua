@@ -89,6 +89,20 @@ func (w *C981XWorker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor .
+func (w *C981XWorker) Monitor() (interface{}, error) {
+	params := map[string]interface{}{
+		"send": map[string]interface{}{
+			"bitrate": 0,
+		},
+	}
+	var reply interface{}
+	if err := RPC(w.card.URL, "encoder.get", params, &reply); err != nil {
+		return nil, err
+	}
+	return reply, nil
+}
+
 // Encode .
 func (w *C981XWorker) Encode(sess *Session) error {
 	settings := map[string]interface{}{

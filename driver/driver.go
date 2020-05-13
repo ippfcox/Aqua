@@ -40,6 +40,7 @@ type Card interface {
 // Worker defines generic operation
 type Worker interface {
 	Control(c CtlCmd, arg interface{}) interface{}
+	Monitor() (interface{}, error)
 }
 
 // Encoder defines Encoder family operation

@@ -104,6 +104,11 @@ func (w *LocalDWorker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor .
+func (w *LocalDWorker) Monitor() (interface{}, error) {
+	return true, nil
+}
+
 // Decode method
 func (w *LocalDWorker) Decode(sess *Session) error {
 

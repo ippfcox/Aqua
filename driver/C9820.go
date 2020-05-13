@@ -185,6 +185,25 @@ func (w *C9820DecWorker) Control(c CtlCmd, arg interface{}) interface{} {
 	return nil
 }
 
+// Monitor .
+func (w *C9820EncWorker) Monitor() (interface{}, error) {
+	params := map[string]interface{}{
+		"send": map[string]interface{}{
+			"bitrate": 0,
+		},
+	}
+	var reply interface{}
+	if err := RPC(w.card.URL, "mosaic_encoder.get", params, &reply); err != nil {
+		return nil, err
+	}
+	return reply, nil
+}
+
+// Monitor .
+func (w *C9820DecWorker) Monitor() (interface{}, error) {
+	return true, nil
+}
+
 // Encode mosaic encoder, note there is only one encoder
 func (w *C9820EncWorker) Encode(sess *Session) error {
 	settings := map[string]interface{}{

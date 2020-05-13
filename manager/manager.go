@@ -36,6 +36,12 @@ type Path struct {
 
 	// workers store all workers can be assigned
 	workers Workers
+
+	// status contains status of workers
+	status map[string]struct {
+		info interface{} // return info
+		err  error
+	}
 }
 
 var (
@@ -49,6 +55,10 @@ var (
 func (ep *Path) Create(dir string, file string, need []string) error {
 
 	ep.inUse = make(map[int]driver.Worker)
+	ep.status = make(map[string]struct {
+		info interface{}
+		err  error
+	})
 
 	ep.workers = Workers{}
 	if err := ep.workers.register(need); err != nil {
@@ -194,6 +204,35 @@ func (ep *Path) GetWorkers() []string {
 	sort.Strings(all)
 
 	return all
+}
+
+// UpdateWorkerStatus call `Monitor()` to update worker status
+func (ep *Path) UpdateWorkerStatus(workerName string) {
+	ep.lock.Lock()
+	defer ep.lock.Unlock()
+
+	w := ep.workers.findWorker(workerName)
+	v, err := w.Monitor()
+
+	ep.status[workerName] = struct {
+		info interface{}
+		err  error
+	}{v, err}
+}
+
+// GetWorkerStatus return current worker status
+func (ep *Path) GetWorkerStatus() map[string]interface{} {
+	ep.lock.RLock()
+	defer ep.lock.RUnlock()
+
+	status := make(map[string]interface{})
+	for k, v := range ep.status {
+		if v.err != nil {
+			continue
+		}
+		status[k] = v.info
+	}
+	return status
 }
 
 // isWorkerAlloc find if a worker is alloc
